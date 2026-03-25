@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, split_nodes_delimiter
 
 
 class TestTextNode(unittest.TestCase):
@@ -23,6 +23,39 @@ class TestTextNode(unittest.TestCase):
         node1 = TextNode("No URL", TextType.TEXT)
         node2 = TextNode("No URL", TextType.TEXT)
         self.assertEqual(node1, node2)
+
+    def test_split_code(self):
+        node = TextNode("Here is `code` text", TextType.TEXT)
+
+        result = split_nodes_delimiter([node], "`", TextType.CODE)
+
+        assert result == [
+            TextNode("Here is ", TextType.TEXT),
+            TextNode("code", TextType.CODE),
+            TextNode(" text", TextType.TEXT),
+        ]
+
+    def test_split_bold_basic(self):
+        node = TextNode("This is **bold** text", TextType.TEXT)
+
+        result = split_nodes_delimiter([node], "**", TextType.BOLD)
+
+        assert result == [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" text", TextType.TEXT),
+        ]
+
+    def test_split_italic_basic(self):
+        node = TextNode("This is _italic_ text", TextType.TEXT)
+
+        result = split_nodes_delimiter([node], "_", TextType.ITALIC)
+
+        assert result == [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" text", TextType.TEXT),
+        ]
 
 
 if __name__ == "__main__":
